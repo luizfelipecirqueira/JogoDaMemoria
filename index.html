@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    .card {
+      width: 80px;
+      height: 80px;
+      font-size: 24px;
+      text-align: center;
+      cursor: pointer;
+    }
+  </style>
+  <title>Memory Game</title>
+</head>
+<body>
+
+  <div id="game-board"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const emojis = ['😀', '😍', '🚀', '🌈', '🐱', '🌍', '🍕', '🎉']; // Adicione mais emojis conforme necessário
+      const cards = emojis.concat(emojis); // Duplica os emojis para criar pares
+      const shuffledCards = shuffleArray(cards);
+      let flippedCards = [];
+      let matchedPairs = 0;
+
+      const gameBoard = document.getElementById('game-board');
+
+      // Cria os cartões no tabuleiro
+      shuffledCards.forEach(function (emoji, index) {
+        const card = document.createElement('div');
+        card.classList.add('card');
+        card.setAttribute('data-index', index);
+        card.textContent = emoji;
+        card.addEventListener('click', flipCard);
+        gameBoard.appendChild(card);
+      });
+
+      // Embaralha o array
+      function shuffleArray(array) {
+        return array.sort(() => Math.random() - 0.5);
+      }
+
+      // Vira os cartões e verifica a correspondência
+      function flipCard() {
+        const index = this.getAttribute('data-index');
+        this.textContent = shuffledCards[index];
+
+        flippedCards.push({ index, emoji: shuffledCards[index] });
+
+        if (flippedCards.length === 2) {
+          setTimeout(checkMatch, 500);
+        }
+      }
+
+      // Verifica se os cartões virados correspondem
+      function checkMatch() {
+        const [card1, card2] = flippedCards;
+
+        if (card1.emoji === card2.emoji && card1.index !== card2.index) {
+          // Correspondência encontrada
+          matchedPairs++;
+          if (matchedPairs === emojis.length) {
+            alert('Parabéns! Você venceu o jogo!');
+          }
+        } else {
+          // Não há correspondência, vira os cartões de volta
+          document.querySelector(`[data-index="${card1.index}"]`).textContent = '';
+          document.querySelector(`[data-index="${card2.index}"]`).textContent = '';
+        }
+
+        // Limpa os cartões virados
+        flippedCards = [];
+      }
+    });
+  </script>
+</body>
+</html>
